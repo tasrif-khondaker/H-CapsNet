@@ -259,13 +259,13 @@ def MNIST_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     # input [batch_size, 2304, 8], output [batch_size, 10, 16]
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="SecondaryCapsule_fine")(squashcf)
 
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 2, 16]
     SecondaryCapsule_coarse = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="SecondaryCapsule_Coarse")(squashc1)
@@ -321,7 +321,6 @@ def MNIST_HCapsNet(input_shape,
     
     return model
     
-
 def ENIST_HCapsNet(input_shape,
                     no_fine_class,no_coarse_class,
                     PCap_n_dims = 8,SCap_n_dims = 16,
@@ -397,13 +396,13 @@ def ENIST_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     # input [batch_size, 2304, 8], output [batch_size, 10, 16]
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 2, 16]
     SecondaryCapsule_coarse = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse")(squashc1)
@@ -563,17 +562,17 @@ def FNIST_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     # input [batch_size, 2304, 8], output [batch_size, 10, 16]
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
-    # Layer 4.2: Digit capsule layer with routing by agreement
+    # Layer 4.2: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 7, 16]
     SecondaryCapsule_coarse2 = SecondaryCapsule(n_caps=no_medium_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse2")(squashc2)
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 2, 16]
     SecondaryCapsule_coarse1 = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse1")(squashc1)
@@ -751,17 +750,17 @@ def CIFAR10_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((4096, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     # input [batch_size, 2304, 8], output [batch_size, 10, 16]
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
-    # Layer 4.2: Digit capsule layer with routing by agreement
+    # Layer 4.2: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 7, 16]
     SecondaryCapsule_coarse2 = SecondaryCapsule(n_caps=no_medium_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse2")(squashc2)
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 2, 16]
     SecondaryCapsule_coarse1 = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse1")(squashc1)
@@ -940,17 +939,17 @@ def CIFAR100_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((4096, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     # input [batch_size, 2304, 8], output [batch_size, 10, 16]
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
-    # Layer 4.2: Digit capsule layer with routing by agreement
+    # Layer 4.2: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 7, 16]
     SecondaryCapsule_coarse2 = SecondaryCapsule(n_caps=no_medium_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse2")(squashc2)
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 2, 16]
     SecondaryCapsule_coarse1 = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse1")(squashc1)

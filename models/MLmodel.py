@@ -218,7 +218,7 @@ def MNIST_HCapsNet(input_shape,
 
     conv2 = keras.layers.BatchNormalization()(conv2)
 
-    #Convulation layer for coarse
+    #Convolution layer for coarse
 
     convc11 = keras.layers.Conv2D(filters=512,
                                   kernel_size=7,
@@ -233,7 +233,7 @@ def MNIST_HCapsNet(input_shape,
     reshapec1 = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_c1")(convc11)
     squashc1 = keras.layers.Lambda(squash, name='squash_layer_c1')(reshapec1)
 
-    #Convulation layer for fine
+    #Convolution layer for fine
     convc31 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -259,13 +259,13 @@ def MNIST_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     # input [batch_size, 2304, 8], output [batch_size, 10, 16]
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="SecondaryCapsule_fine")(squashcf)
 
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     # input [batch_size, 1152, 8], output [batch_size, 2, 16]
     SecondaryCapsule_coarse = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="SecondaryCapsule_Coarse")(squashc1)
@@ -275,7 +275,7 @@ def MNIST_HCapsNet(input_shape,
     fine_pred_layer = LengthLayer(name='Fine_prediction_output_layer')(SecondaryCapsule_fine)
 
 
-    # Layer 5.3: Compute the length of each capsule vector
+    # Layer 5.2: Compute the length of each capsule vector
     # input [batch_size, 10, 16], output [batch_size, 2]
     coarse_pred_layer = LengthLayer(name='Coarse_prediction_output_layer')(SecondaryCapsule_coarse)
 
@@ -283,13 +283,12 @@ def MNIST_HCapsNet(input_shape,
     coarse_input = keras.Input(shape=(no_coarse_class,), name="coarse_image_label")
 
     # Mask layer
-
     decoder_input_fine = Mask(name='Mask_input_fine')([SecondaryCapsule_fine, fine_input, fine_pred_layer]) 
     decoder_input_coarse = Mask(name='Mask_input_coarse')([SecondaryCapsule_coarse, coarse_input, coarse_pred_layer]) 
 
     # Decoder_Coarse
     # input [batch_size, 80], output [batch_size, 28, 28, 1]
-    
+   
     n_output = np.prod(input_shape)
   
     decoder_coarse = keras.models.Sequential(name='Decoder_coarse')
@@ -355,7 +354,7 @@ def ENIST_HCapsNet(input_shape,
 
     conv2 = keras.layers.BatchNormalization()(conv2)
 
-    #Convulation layer for coarse
+    #Convolution layer for coarse
 
     convc11 = keras.layers.Conv2D(filters=512,
                                   kernel_size=7,
@@ -366,11 +365,10 @@ def ENIST_HCapsNet(input_shape,
     convc11 = keras.layers.BatchNormalization()(convc11)
 
     # Layer 3: Reshape to 8D primary capsules 
-    # input [batch_size, 6, 6, 512], output [batch_size, 2304, 8]
     reshapec1 = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_c1")(convc11)
     squashc1 = keras.layers.Lambda(squash, name='squash_layer_c1')(reshapec1)
 
-    #Convulation layer for fine
+    #Convolution layer for fine
     convc31 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -396,24 +394,19 @@ def ENIST_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
-    # input [batch_size, 2304, 8], output [batch_size, 10, 16]
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 2, 16]
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse")(squashc1)
 
     # Layer 5.1: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 10]
     fine_pred_layer = LengthLayer(name='Fine_prediction_output_layer')(SecondaryCapsule_fine)
 
-
-    # Layer 5.3: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 2]
+    # Layer 5.2: Compute the length of each capsule vector
     coarse_pred_layer = LengthLayer(name='Coarse_prediction_output_layer')(SecondaryCapsule_coarse)
 
     fine_input = keras.Input(shape=(no_fine_class,), name="fine_image_label")
@@ -427,7 +420,6 @@ def ENIST_HCapsNet(input_shape,
     n_output = np.prod(input_shape)
 
     # Decoder_Coarse
-    # input [batch_size, 80], output [batch_size, 28, 28, 1]
     decoder_coarse = keras.models.Sequential(name='Decoder_coarse')
     decoder_coarse.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_coarse_class))
     decoder_coarse.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -435,7 +427,6 @@ def ENIST_HCapsNet(input_shape,
     decoder_coarse.add(keras.layers.Reshape(target_shape=input_shape, name='recon_output_layer_coarse'))
 
     # Decoder_fine
-    # input [batch_size, 160], output [batch_size, 28, 28, 1]
     decoder_fine = keras.models.Sequential(name='Decoder_fine')
     decoder_fine.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_fine_class))
     decoder_fine.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -492,8 +483,7 @@ def FNIST_HCapsNet(input_shape,
 
     conv2 = keras.layers.BatchNormalization()(conv2)
 
-    #Convulation layer for coarse-1
-
+    #Convolution layer for coarse
     convc11 = keras.layers.Conv2D(filters=512,
                                   kernel_size=7,
                                   padding="valid",
@@ -502,13 +492,11 @@ def FNIST_HCapsNet(input_shape,
                                   name='convc11')(conv2)
     convc11 = keras.layers.BatchNormalization()(convc11)
 
-    # Layer 3: Reshape to 8D primary capsules 
-    # input [batch_size, 6, 6, 512], output [batch_size, 2304, 8]
+    # Layer 3: Reshape to 8D primary capsules
     reshapec1 = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_c1")(convc11)
     squashc1 = keras.layers.Lambda(squash, name='squash_layer_c1')(reshapec1)
 
-    #Convulation layer for coarse-2
-
+    #Convolution layer for Medium
     convc21 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -536,7 +524,7 @@ def FNIST_HCapsNet(input_shape,
     reshapec2 = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_c2")(convc23)
     squashc2 = keras.layers.Lambda(squash, name='squash_layer_c2')(reshapec2)
 
-    #Convulation layer for fine
+    #Convolution layer for fine
     convc31 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -562,31 +550,25 @@ def FNIST_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((2304, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
-    # input [batch_size, 2304, 8], output [batch_size, 10, 16]
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
-    # Layer 4.2: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 7, 16]
+    # Layer 4.2: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse2 = SecondaryCapsule(n_caps=no_medium_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse2")(squashc2)
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 2, 16]
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse1 = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse1")(squashc1)
 
     # Layer 5.1: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 10]
     fine_pred_layer = LengthLayer(name='Fine_prediction_output_layer')(SecondaryCapsule_fine)
 
     # Layer 5.2: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 7]
     coarse2_pred_layer = LengthLayer(name='Coarse2_prediction_output_layer')(SecondaryCapsule_coarse2)
 
     # Layer 5.3: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 2]
     coarse1_pred_layer = LengthLayer(name='Coarse1_prediction_output_layer')(SecondaryCapsule_coarse1)
 
     fine_input = keras.Input(shape=(no_fine_class,), name="fine_image_label")
@@ -594,10 +576,6 @@ def FNIST_HCapsNet(input_shape,
     coarse1_input = keras.Input(shape=(no_coarse_class,), name="coarse1_image_label")
 
     # Mask layer
-    # input [batch_size, 10], output [batch_size, 160]
-    # input [batch_size, 7], output [batch_size, 112]
-    # input [batch_size, 2], output [batch_size, 32]
-    
     n_output = np.prod(input_shape)
 
     decoder_input_fine = Mask(name='Mask_input_fine')([SecondaryCapsule_fine, fine_input, fine_pred_layer])
@@ -605,7 +583,6 @@ def FNIST_HCapsNet(input_shape,
     decoder_input_coarse1 = Mask(name='Mask_input_coarse1')([SecondaryCapsule_coarse1, coarse1_input, coarse1_pred_layer])
 
     # Decoder_fine
-    # input [batch_size, 160], output [batch_size, 32, 32, 32]
     decoder_fine = keras.models.Sequential(name='Decoder_fine')
     decoder_fine.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_fine_class))
     decoder_fine.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -613,7 +590,6 @@ def FNIST_HCapsNet(input_shape,
     decoder_fine.add(keras.layers.Reshape(target_shape=input_shape, name='recon_output_layer_fine'))
 
     # Decoder_Coarse2
-    # input [batch_size, 112], output [batch_size, 32, 32, 3]
     decoder_coarse2 = keras.models.Sequential(name='Decoder_coarse2')
     decoder_coarse2.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_medium_class))
     decoder_coarse2.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -621,7 +597,6 @@ def FNIST_HCapsNet(input_shape,
     decoder_coarse2.add(keras.layers.Reshape(target_shape=input_shape, name='recon_output_layer_coarse2'))
 
     # Decoder_Coarse1
-    # input [batch_size, 32], output [batch_size, 32, 32, 3]
     decoder_coarse1 = keras.models.Sequential(name='Decoder_coarse1')
     decoder_coarse1.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_coarse_class))
     decoder_coarse1.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -665,7 +640,6 @@ def CIFAR10_HCapsNet(input_shape,
     # Input image
     x_input = keras.layers.Input(shape=input_shape, name="Input_Image")
     # Layer 1 and 2: Two conventional Conv2D layer
-    # input [batch_size, 32, 32, 3], output [batch_size, 6, 6, 512]
     conv1 = keras.layers.Conv2D(filters=32,
                                 kernel_size=3,
                                 padding="valid",
@@ -682,8 +656,7 @@ def CIFAR10_HCapsNet(input_shape,
                                 name='conv2')(conv1)
     conv2 = keras.layers.BatchNormalization()(conv2)
 
-    #Convulation layer for coarse-1
-
+    #Convolution layer for Coarse
     convc11 = keras.layers.Conv2D(filters=256,
                                   kernel_size=6,
                                   padding="valid",
@@ -693,12 +666,10 @@ def CIFAR10_HCapsNet(input_shape,
     convc11 = keras.layers.BatchNormalization()(convc11)
 
     # Layer 3: Reshape to 8D primary capsules 
-    # input [batch_size, 6, 6, 512], output [batch_size, 2304, 8]
     reshapec1 = keras.layers.Reshape((2048, PCap_n_dims), name="reshape_layer_c1")(convc11)
     squashc1 = keras.layers.Lambda(squash, name='squash_layer_c1')(reshapec1)
 
-    #Convulation layer for coarse-2
-
+    #Convolution layer for Medium
     convc21 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -724,7 +695,7 @@ def CIFAR10_HCapsNet(input_shape,
     reshapec2 = keras.layers.Reshape((4096, PCap_n_dims), name="reshape_layer_c2")(convc23)
     squashc2 = keras.layers.Lambda(squash, name='squash_layer_c2')(reshapec2)
 
-    #Convulation layer for fine
+    #Convolution layer for fine
     convc31 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -750,31 +721,25 @@ def CIFAR10_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((4096, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
-    # input [batch_size, 2304, 8], output [batch_size, 10, 16]
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
-    # Layer 4.2: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 7, 16]
+    # Layer 4.2: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse2 = SecondaryCapsule(n_caps=no_medium_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse2")(squashc2)
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 2, 16]
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse1 = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse1")(squashc1)
 
     # Layer 5.1: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 10]
     fine_pred_layer = LengthLayer(name='Fine_prediction_output_layer')(SecondaryCapsule_fine)
 
     # Layer 5.2: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 7]
     coarse2_pred_layer = LengthLayer(name='Coarse2_prediction_output_layer')(SecondaryCapsule_coarse2)
 
     # Layer 5.3: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 2]
     coarse1_pred_layer = LengthLayer(name='Coarse1_prediction_output_layer')(SecondaryCapsule_coarse1)
 
     fine_input = keras.Input(shape=(no_fine_class,), name="fine_image_label")
@@ -782,10 +747,6 @@ def CIFAR10_HCapsNet(input_shape,
     coarse1_input = keras.Input(shape=(no_coarse_class,), name="coarse1_image_label")
 
     # Mask layer
-    # input [batch_size, 10], output [batch_size, 160]
-    # input [batch_size, 7], output [batch_size, 112]
-    # input [batch_size, 2], output [batch_size, 32]
-    
     decoder_input_fine = Mask(name='Mask_input_fine')([SecondaryCapsule_fine, fine_input, fine_pred_layer])
     decoder_input_coarse2 = Mask(name='Mask_input_coarse2')([SecondaryCapsule_coarse2, coarse2_input, coarse2_pred_layer])
     decoder_input_coarse1 = Mask(name='Mask_input_coarse1')([SecondaryCapsule_coarse1, coarse1_input, coarse1_pred_layer])
@@ -871,8 +832,7 @@ def CIFAR100_HCapsNet(input_shape,
                                 name='conv2')(conv1)
     conv2 = keras.layers.BatchNormalization()(conv2)
 
-    #Convulation layer for coarse-1
-
+    #Convolution layer for Coarse
     convc11 = keras.layers.Conv2D(filters=256,
                                   kernel_size=6,
                                   padding="valid",
@@ -882,12 +842,10 @@ def CIFAR100_HCapsNet(input_shape,
     convc11 = keras.layers.BatchNormalization()(convc11)
 
     # Layer 3: Reshape to 8D primary capsules 
-    # input [batch_size, 6, 6, 512], output [batch_size, 2304, 8]
     reshapec1 = keras.layers.Reshape((2048, PCap_n_dims), name="reshape_layer_c1")(convc11)
     squashc1 = keras.layers.Lambda(squash, name='squash_layer_c1')(reshapec1)
 
-    #Convulation layer for coarse-2
-
+    #Convolution layer for Medium
     convc21 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -913,7 +871,7 @@ def CIFAR100_HCapsNet(input_shape,
     reshapec2 = keras.layers.Reshape((4096, PCap_n_dims), name="reshape_layer_c2")(convc23)
     squashc2 = keras.layers.Lambda(squash, name='squash_layer_c2')(reshapec2)
 
-    #Convulation layer for fine
+    #Convolution layer for fine
     convc31 = keras.layers.Conv2D(filters=128,
                                   kernel_size=3,
                                   padding="valid",
@@ -939,32 +897,26 @@ def CIFAR100_HCapsNet(input_shape,
     reshapef = keras.layers.Reshape((4096, PCap_n_dims), name="reshape_layer_f")(convc33)
     squashcf = keras.layers.Lambda(squash, name='squash_layer_f')(reshapef)
 
-    # Layer 4.1: Digit capsule layer with routing by agreement
-    # input [batch_size, 2304, 8], output [batch_size, 10, 16]
+    # Layer 4.1: Secondary capsule layer with routing by agreement
     SecondaryCapsule_fine = SecondaryCapsule(n_caps=no_fine_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_fine")(squashcf)
 
-    # Layer 4.2: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 7, 16]
+    # Layer 4.2: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse2 = SecondaryCapsule(n_caps=no_medium_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse2")(squashc2)
 
-    # Layer 4.3: Digit capsule layer with routing by agreement
-    # input [batch_size, 1152, 8], output [batch_size, 2, 16]
+    # Layer 4.3: Secondary capsule layer with routing by agreement
     SecondaryCapsule_coarse1 = SecondaryCapsule(n_caps=no_coarse_class, n_dims=SCap_n_dims, 
                         name="Digit_Caps_coarse1")(squashc1)
 
     # Layer 5.1: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 10]
     Droupout_layer_fine = keras.layers.Dropout(0.3,name='Fine_prediction_Dropout')(SecondaryCapsule_fine)
     fine_pred_layer = LengthLayer(name='Fine_prediction_output_layer')(Droupout_layer_fine)
 
     # Layer 5.2: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 7]
     coarse2_pred_layer = LengthLayer(name='Coarse2_prediction_output_layer')(SecondaryCapsule_coarse2)
 
     # Layer 5.3: Compute the length of each capsule vector
-    # input [batch_size, 10, 16], output [batch_size, 2]
     coarse1_pred_layer = LengthLayer(name='Coarse1_prediction_output_layer')(SecondaryCapsule_coarse1)
 
     fine_input = keras.Input(shape=(no_fine_class,), name="fine_image_label")
@@ -972,9 +924,6 @@ def CIFAR100_HCapsNet(input_shape,
     coarse1_input = keras.Input(shape=(no_coarse_class,), name="coarse1_image_label")
 
     # Mask layer
-    # input [batch_size, 10], output [batch_size, 160]
-    # input [batch_size, 7], output [batch_size, 112]
-    # input [batch_size, 2], output [batch_size, 32]
 
     decoder_input_fine = Mask(name='Mask_input_fine')([SecondaryCapsule_fine, fine_input, fine_pred_layer])
     decoder_input_coarse2 = Mask(name='Mask_input_coarse2')([SecondaryCapsule_coarse2, coarse2_input, coarse2_pred_layer])
@@ -983,7 +932,6 @@ def CIFAR100_HCapsNet(input_shape,
     n_output = np.prod(input_shape)
 
     # Decoder_fine
-    # input [batch_size, 160], output [batch_size, 32, 32, 32]
     decoder_fine = keras.models.Sequential(name='Decoder_fine')
     decoder_fine.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_fine_class))
     decoder_fine.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -991,7 +939,6 @@ def CIFAR100_HCapsNet(input_shape,
     decoder_fine.add(keras.layers.Reshape(target_shape=input_shape, name='recon_output_layer_fine'))
 
     # Decoder_Coarse2
-    # input [batch_size, 112], output [batch_size, 32, 32, 3]
     decoder_coarse2 = keras.models.Sequential(name='Decoder_coarse2')
     decoder_coarse2.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_medium_class))
     decoder_coarse2.add(keras.layers.Dense(n_hidden2, activation='relu'))
@@ -999,7 +946,6 @@ def CIFAR100_HCapsNet(input_shape,
     decoder_coarse2.add(keras.layers.Reshape(target_shape=input_shape, name='recon_output_layer_coarse2'))
 
     # Decoder_Coarse1
-    # input [batch_size, 32], output [batch_size, 32, 32, 3]
     decoder_coarse1 = keras.models.Sequential(name='Decoder_coarse1')
     decoder_coarse1.add(keras.layers.Dense(n_hidden1, activation='relu', input_dim=SCap_n_dims*no_coarse_class))
     decoder_coarse1.add(keras.layers.Dense(n_hidden2, activation='relu'))
