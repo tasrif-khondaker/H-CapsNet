@@ -80,7 +80,8 @@ def MNIST():
     tree = DatasetTree([fine_coarse])
     
     
-    return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    # return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse,'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse, 'y_test_fine':y_test_fine, 'tree':tree}
     
 def E_MNIST():
     from emnist import list_datasets, extract_training_samples, extract_test_samples
@@ -123,7 +124,8 @@ def E_MNIST():
         
     tree = DatasetTree([fine_coarse])
     
-    return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    # return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse,'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse, 'y_test_fine':y_test_fine, 'tree':tree}
     
 
 def F_MNIST():
@@ -166,7 +168,8 @@ def F_MNIST():
 
     tree = DatasetTree([coarse2_coarse1, fine_coarse2])
 
-    return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
+    # return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, 'tree':tree}
 
 
 def CIFAR10():
@@ -217,7 +220,8 @@ def CIFAR10():
 
     tree = DatasetTree([coarse2_coarse1, fine_coarse2])
 
-    return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
+    # return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, 'tree':tree}
   
   
     

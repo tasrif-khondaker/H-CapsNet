@@ -280,6 +280,5 @@ def CIFAR100():
     tree = DatasetTree([coarse2_coarse1, fine_coarse2])
 
     # return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
-    # return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, tree}
-    return {'x_train':x_train, 'y_train_coarse':y_train_coarse1}
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, 'tree':tree}
     
