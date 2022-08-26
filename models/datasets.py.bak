@@ -4,6 +4,10 @@ from treelib import Tree
 import numpy as np
 
 from emnist import list_datasets, extract_training_samples, extract_test_samples
+import math
+import random
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 def DatasetTree(level_maps):
@@ -80,7 +84,8 @@ def MNIST():
     tree = DatasetTree([fine_coarse])
     
     
-    return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    # return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse,'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse, 'y_test_fine':y_test_fine, 'tree':tree}
     
 def E_MNIST():
     from emnist import list_datasets, extract_training_samples, extract_test_samples
@@ -123,9 +128,9 @@ def E_MNIST():
         
     tree = DatasetTree([fine_coarse])
     
-    return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    # return x_train, y_train_coarse, y_train_fine, x_test, y_test_coarse, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse,'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse, 'y_test_fine':y_test_fine, 'tree':tree}
     
-
 def F_MNIST():
     F_MNIST = keras.datasets.fashion_mnist
     (x_train, y_train), (x_test, y_test) = F_MNIST.load_data()
@@ -166,8 +171,8 @@ def F_MNIST():
 
     tree = DatasetTree([coarse2_coarse1, fine_coarse2])
 
-    return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
-
+    # return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, 'tree':tree}
 
 def CIFAR10():
     CIFAR10 = keras.datasets.cifar10
@@ -217,9 +222,8 @@ def CIFAR10():
 
     tree = DatasetTree([coarse2_coarse1, fine_coarse2])
 
-    return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
-  
-  
+    # return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
+    return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, 'tree':tree}
     
 def CIFAR100():
     CIFAR100 = keras.datasets.cifar100
@@ -282,3 +286,24 @@ def CIFAR100():
     # return x_train, y_train_coarse1, y_train_coarse2, y_train_fine, x_test, y_test_coarse1, y_test_coarse2, y_test_fine, tree
     return {'x_train':x_train, 'y_train_coarse':y_train_coarse1, 'y_train_medium':y_train_coarse2, 'y_train_fine':y_train_fine, 'x_test':x_test, 'y_test_coarse':y_test_coarse1, 'y_test_medium':y_test_coarse2, 'y_test_fine':y_test_fine, 'tree':tree}
     
+def plot_sample_image(x_input, y_labels : dict, no_sample : int = 10, no_column : int = 10):
+
+    input_shape = x_input.shape[1:] # input shape
+    
+    plot_row= math.ceil(no_sample/no_column)
+    random_number = random.sample(range(0, len(x_input)), no_sample)
+    fig, axs = plt.subplots(plot_row,no_column, #### Row and column number for no_sample
+                        figsize=(20, 20), facecolor='w', edgecolor='k')
+                        
+    fig.subplots_adjust(hspace = .5, wspace=.001)
+    axs = axs.ravel()
+    
+    for i in range(no_sample):
+        sample_image = x_input[random_number[i]].reshape(input_shape)
+        axs[i].imshow(sample_image)
+        
+        if len(y_labels) == 2:
+            axs[i].set_title('Coarse = {0},\nFine = {1}'.format(str(np.argmax(y_labels['coarse'][random_number[i]])), str(np.argmax(y_labels['fine'][random_number[i]]))))
+        elif len(y_labels) == 3:
+            axs[i].set_title('Coarse = {0},\nMedium = {1},\nFine = {2}'.format(str(np.argmax(y_labels['coarse'][random_number[i]])), str(np.argmax(y_labels['medium'][random_number[i]])), str(np.argmax(y_labels['fine'][random_number[i]]))))
+        

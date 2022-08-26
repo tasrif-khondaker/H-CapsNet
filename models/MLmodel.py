@@ -187,7 +187,8 @@ class MarginLoss(keras.losses.Loss):
 def MNIST_HCapsNet(input_shape,
                     no_coarse_class, no_fine_class,
                     PCap_n_dims = 8, SCap_n_dims = 16,
-                    n_hidden1 = 512, n_hidden2 = 1024):
+                    n_hidden1 = 512, n_hidden2 = 1024,
+                    model_name : str = 'H-CapsNet_MNIST'):
     """
     #H-Capsnet model for MNIST Dataset
     #Model has two hierarchical levels: It requires labels inputs for all the levels requires.
@@ -313,10 +314,9 @@ def MNIST_HCapsNet(input_shape,
     Output_Layer = keras.layers.Dense(1, activation='linear',name='Final_output')(concatted)
     
     # Capsnet model
-    model = keras.Model(
-        inputs= [x_input, coarse_input, fine_input],
-        outputs= [coarse_pred_layer, fine_pred_layer, Output_Layer],
-        name='H-CapsNet_MNIST')
+    model = keras.Model(inputs = [x_input, coarse_input, fine_input],
+                        outputs = [coarse_pred_layer, fine_pred_layer, Output_Layer],
+                        name = model_name)
     
     return model
     
@@ -970,3 +970,22 @@ def CIFAR100_HCapsNet(input_shape,
         name='H-CapsNet_CIFAR100') 
     
     return model
+    
+def initial_lw(class_labels: dict):
+    """
+    Give dictionary input for hierarchical levels.
+    Where the values for the input keys needs to be total number of classes in the levels.
+    Example for 3 levels hierarchy with 2, 7, 10 class will be in following format:
+    class_labels = {"coarse": coarse_class, "medium": medium_class,"fine": fine_class}
+    The Function will return c values in a dictionary.
+    """
+
+    q = {}
+    for k, v in class_labels.items():
+        q[k] = (1 - (v / sum(class_labels.values())))
+
+    c = {}
+    for k, v in class_labels.items():
+        c[k] = (q[k] / sum(q.values()))
+        
+    return c
