@@ -20,3 +20,23 @@ https://github.com/tboone91/Marine-tree
 
 # HOW TO ANALYSE
 To analyse H-CapsNet model use the "H-CapsNet-Analysis.ipynb" file. The file required pre-trained model weights to evaluate on each dataset. Please use the provided weights or use the "H-CapsNet_Training.ipynb" file to train and generate model weights before evaluate the models.
+
+------
+# Citation
+If the code and data are used in your research, please cite the paper:
+
+```bash
+@article{NOOR2024110135,
+title = {H-CapsNet: A capsule network for hierarchical image classification},
+journal = {Pattern Recognition},
+volume = {147},
+pages = {110135},
+year = {2024},
+issn = {0031-3203},
+doi = {https://doi.org/10.1016/j.patcog.2023.110135},
+url = {https://www.sciencedirect.com/science/article/pii/S0031320323008324},
+author = {Khondaker Tasrif Noor and Antonio Robles-Kelly},
+keywords = {Capsule networks, Hierarchical image classification, Convolutional neural networks, Deep learning},
+abstract = {In this paper, we present H-CapsNet, a capsule network for hierarchical image classification. Our network makes use of the natural capacity of CapsNets (capsule networks) to capture hierarchical relationships. Thus, our network is such that each multi-layer capsule network accounts for each of the class hierarchies using dedicated capsules. Further, we make use of a modified hinge loss that enforces consistency amongst the hierarchies involved. We also present a strategy to dynamically adjust the training parameters to achieve a better balance between the class hierarchies under consideration. We have performed experiments using several widely available datasets and compared them against several alternatives. In our experiments, H-CapsNet delivers a margin of improvement over competing hierarchical classification networks elsewhere in the literature.}
+}
+```
