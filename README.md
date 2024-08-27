@@ -1,5 +1,11 @@
 # H-CapsNet: A Capsule Network for Hierarchical Image Classification
 
+This is the official implementation of the paper titled ["H-CapsNet: A capsule network for hierarchical image classification"](https://doi.org/10.1016/j.patcog.2023.110135) by Khondaker Tasrif Noor and Antonio Robles-Kelly. The paper is available on [Pattern Recognition Journal.](https://doi.org/10.1016/j.patcog.2023.110135)
+
+## Abstract
+
+In this paper, we present H-CapsNet, a capsule network for hierarchical image classification. Our network makes use of the natural capacity of CapsNets (capsule networks) to capture hierarchical relationships. Thus, our network is such that each multi-layer capsule network accounts for each of the class hierarchies using dedicated capsules. Further, we make use of a modified hinge loss that enforces consistency amongst the hierarchies involved. We also present a strategy to dynamically adjust the training parameters to achieve a better balance between the class hierarchies under consideration. We have performed experiments using several widely available datasets and compared them against several alternatives. In our experiments, H-CapsNet delivers a margin of improvement over competing hierarchical classification networks elsewhere in the literature.
+
 ## HIGHLIGHTS
 
 * We propose a new CapsNet for hierarchical classification containing a dedicated capsule network for each hierarchical level. In this manner, our network can deliver multiple class predictions based on a hierarchical label-tree.
